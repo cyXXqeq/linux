@@ -1,0 +1,6 @@
+servers:
+  hosts:
+    server:
+      ansible_host: 10.17.77.92
+      ansible_user: root
+      ansible_port: 22

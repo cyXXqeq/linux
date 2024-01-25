@@ -1,0 +1,49 @@
+#!/usr/bin/python3
+
+import cgi
+import requests
+import json
+
+form = cgi.FieldStorage()
+city = form.getvalue("city", "")
+unit = form.getvalue("unit", "metric")
+
+api_key = "b1d4b2cfb62107065d96dc99e50c1297"
+
+api_url = "https://api.openweathermap.org/data/2.5/weather"
+
+params = {
+    "q": city,
+    "units": unit,
+    "lang": "ru",
+    "appid": api_key
+}
+
+response = requests.get(api_url, params=params)
+
+if response.status_code == 200:
+    weather_data = response.json()
+
+    city_name = weather_data["name"]
+    temperature = weather_data["main"]["temp"]
+    weather_description = weather_data["weather"][0]["description"]
+
+    ans = '''
+Content-type: text/html
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Текущая погода в городе {0}</title>
+</head>
+<body>
+<h1>Текущая погода в городе {1}</h1>
+<p>Температура: {2} {3}</p>
+<p>Описание: {4}</p>
+</body>
+</html>
+   '''
+    print(ans.format(city_name, city_name, temperature, unit, weather_description))
+else:
+    print(f"Ошибка запроса: {response.status_code} - {response.text}")
